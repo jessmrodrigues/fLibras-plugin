@@ -1,4 +1,4 @@
-# test_singleton
+# fLibras plugin
 
 A new Flutter project.
 
