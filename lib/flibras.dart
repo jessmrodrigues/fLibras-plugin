@@ -4,49 +4,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:test_singleton/webview_controller_manager.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
+import 'html_content.dart';
+
 class fLibras extends StatelessWidget {
   final List<String> texts;
+  HtmlGenerator htmlGenerator = HtmlGenerator();
 
   fLibras({required this.texts});
 
-  final String htmlContent = '''
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <title>VLibras</title>
-    </head>
-    <body>
-      <div vw class="enabled">
-        <div vw-access-button class="active"></div>
-        <div vw-plugin-wrapper>
-          <div class="vw-plugin-top-wrapper"></div>
-        </div>
-      </div>
-      <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
-      <script>
-        new window.VLibras.Widget('https://vlibras.gov.br/app');
-      </script>
-      <p id="texto"></p>
-      <script>
-        function setTextFromFlutter(textArray) {
-          var textoElement = document.getElementById('texto');
-          textoElement.innerHTML = "";
-
-          for (var i = 0; i < textArray.length; i++) {
-            var paragraph = document.createElement('p');
-            paragraph.innerText = textArray[i];
-            paragraph.id = i;
-            textoElement.appendChild(paragraph);
-          }
-        }
-        function fLibrasClick(id) {
-          var t = document.getElementById(id);
-          t.click();
-        }
-      </script>
-    </body>
-    </html>
-  ''';
+  String _generateHtmlContent() {
+    return htmlGenerator.generateHtmlContent();
+  }
 
   void _injectTextIntoWebView(WebViewController controller) async {
     final script = "setTextFromFlutter(${json.encode(texts)});";
@@ -55,6 +23,7 @@ class fLibras extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final htmlContent = _generateHtmlContent();
     return SizedBox(
       height: 500,
       width: 500,

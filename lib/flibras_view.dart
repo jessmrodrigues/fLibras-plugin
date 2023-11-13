@@ -15,25 +15,18 @@ class _FLibrasViewState extends State<FLibrasView> {
   @override
   Widget build(BuildContext context) {
     final List<TextDisplayWidget> textWidgets = [
-      TextDisplayWidget(
-        displayedText:
-            'A beleza da natureza é indescritível. Suas paisagens deslumbrantes nos inspiram a cada dia.',
-        id: 0,
-        onTap: (text) => findTextById(0),
-      ),
-      TextDisplayWidget(
-        displayedText:
-            'Os rios fluem serenamente, trazendo vida a todas as criaturas que deles dependem.',
-        id: 1,
-        onTap: (text) => findTextById(1),
-      ),
-      TextDisplayWidget(
-        displayedText:
-            'As florestas são o pulmão do nosso planeta, produzindo oxigênio e abrigando uma incrível diversidade de vida.',
-        id: 2,
-        onTap: (text) => findTextById(2),
-      ),
-    ];
+      'A beleza da natureza é indescritível. Suas paisagens deslumbrantes nos inspiram a cada dia.',
+      'Os rios fluem serenamente, trazendo vida a todas as criaturas que deles dependem.',
+      'As florestas são o pulmão do nosso planeta, produzindo oxigênio e abrigando uma incrível diversidade de vida.',
+    ].asMap().entries.map((entry) {
+      final int id = entry.key;
+      final String text = entry.value;
+      return TextDisplayWidget(
+        displayedText: text,
+        id: id,
+        onTap: (text) => findTextById(id),
+      );
+    }).toList();
     listTexts = textWidgets.map((widget) => widget.displayedText).toList();
     return Scaffold(
       appBar: AppBar(
