@@ -25,6 +25,9 @@ class _FLibrasViewState extends State<FLibrasView> {
         displayedText: text,
         id: id,
         onTap: (text) => findTextById(id),
+        fontSize: 20,
+        fontWeight: FontWeight.normal,
+        textColor: Colors.blue,
       );
     }).toList();
     listTexts = textWidgets.map((widget) => widget.displayedText).toList();
