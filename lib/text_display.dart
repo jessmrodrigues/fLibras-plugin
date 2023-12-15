@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class TextDisplayWidget extends StatelessWidget {
+class TextDisplayWidget extends StatefulWidget {
   final String displayedText;
   final int id;
   final Function(int) onTap;
@@ -30,23 +30,34 @@ class TextDisplayWidget extends StatelessWidget {
   });
 
   @override
+  _TextDisplayWidgetState createState() => _TextDisplayWidgetState();
+}
+
+class _TextDisplayWidgetState extends State<TextDisplayWidget> {
+  int? lastClicked;
+
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        onTap(id);
+        setState(() {
+          if (lastClicked == widget.id) {
+            lastClicked = null;
+          } else {
+            lastClicked = widget.id;
+          }
+        });
+        widget.onTap(widget.id);
       },
       child: Text(
-        displayedText,
+        widget.displayedText,
         style: TextStyle(
-          fontSize: fontSize,
-          fontWeight: fontWeight,
-          color: textColor,
-          height: lineHeight,
-          fontFamily: fontFamily,
-          letterSpacing: letterSpacing,
-          wordSpacing: wordSpacing,
-          textBaseline: textBaseline,
-          decoration: textDecoration,
+          fontSize: widget.fontSize,
+          fontWeight: widget.fontWeight,
+          color: widget.textColor,
+          decoration: lastClicked == widget.id
+              ? TextDecoration.underline
+              : TextDecoration.none,
         ),
       ),
     );
