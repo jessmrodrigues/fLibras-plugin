@@ -16,7 +16,7 @@ class NewsResponse {
       status: json['status'],
       totalResults: json['totalResults'],
       articles: List<Article>.from(
-        json['articles'].map((article) => Article.fromJson(article)),
+        json['results'].map((article) => Article.fromJson(article)),
       ),
     );
   }

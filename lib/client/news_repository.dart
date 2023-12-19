@@ -15,7 +15,7 @@ class NewsRepository {
     }
   }
 
-  Future<Map<String, dynamic>> getNameNews(String query) async {
+  Future<NewsResponse> getNameNews(String query) async {
     try {
       final newsResponse = await _apiService.getByNewsName(query);
       return newsResponse;

@@ -91,7 +91,7 @@ class _NewsState extends State<News> with SingleTickerProviderStateMixin {
                           },
                         ),
                         onTap: () {
-                          _launchURL(articles[index].url); // mudar para pegar o content dps
+                          //_launchURL(articles[index].url); // mudar para pegar o content dps
                         },
                       ),
                     );
