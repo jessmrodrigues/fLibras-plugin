@@ -37,6 +37,21 @@ class _NewsState extends State<News> with SingleTickerProviderStateMixin {
     }
   }
 
+  Future<void> _searchNews(String query) async {
+    try {
+      if (query.isNotEmpty) {
+        final newsResponse = await widget.newsRepository.getNameNews(query);
+        setState(() {
+          articles = newsResponse.articles;
+        });
+      } else {
+        _loadNews();
+      }
+    } catch (e) {
+      print('Error searching news: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,6 +83,9 @@ class _NewsState extends State<News> with SingleTickerProviderStateMixin {
                   ),
                   child: TextField(
                     controller: searchController,
+                    onChanged: (query){
+                      _searchNews(query);
+                    },
                     decoration: const InputDecoration(
                       hintText: 'Pesquisar...',
                       border: InputBorder.none,
