@@ -17,7 +17,7 @@ class News extends StatefulWidget {
 
 class _NewsState extends State<News> with SingleTickerProviderStateMixin {
   late List<Article> articles;
-  late List<Article> favoriteArticles; 
+  late List<Article> favoriteArticles;
   late TextEditingController searchController;
   late TabController _tabController;
 
@@ -109,18 +109,34 @@ class _NewsState extends State<News> with SingleTickerProviderStateMixin {
                 child: ListView.builder(
                   itemCount: articles.length,
                   itemBuilder: (context, index) {
-                        final isFavorite = favoriteArticles.contains(articles[index]);
+                    final isFavorite =
+                        favoriteArticles.contains(articles[index]);
                     return Card(
                       margin: const EdgeInsets.all(8.0),
                       child: ListTile(
                         title: Text(articles[index].title),
-                        subtitle: Text(articles[index].description ?? ''),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(articles[index].description ?? ''),
+                            SizedBox(height: 8.0),
+                            if (articles[index].image_url != null)
+                              Image.network(
+                                articles[index].image_url!,
+                                height: 100.0,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                              ),
+                          ],
+                        ),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             IconButton(
                               icon: Icon(
-                                isFavorite ? Icons.star_rounded : Icons.star_border_rounded,
+                                isFavorite
+                                    ? Icons.star_rounded
+                                    : Icons.star_border_rounded,
                                 color: isFavorite ? Colors.green : null,
                               ),
                               onPressed: () {
@@ -152,7 +168,8 @@ class _NewsState extends State<News> with SingleTickerProviderStateMixin {
                       margin: const EdgeInsets.all(8.0),
                       child: ListTile(
                         title: Text(favoriteArticles[index].title),
-                        subtitle: Text(favoriteArticles[index].description ?? ''),
+                        subtitle:
+                            Text(favoriteArticles[index].description ?? ''),
                         trailing: IconButton(
                           icon: const Icon(Icons.delete),
                           onPressed: () {
@@ -171,28 +188,28 @@ class _NewsState extends State<News> with SingleTickerProviderStateMixin {
     );
   }
 
-Future<void> _addToFavorites(int index) async {
-  if (index >= 0 && index < articles.length) {
-    final article = articles[index];
+  Future<void> _addToFavorites(int index) async {
+    if (index >= 0 && index < articles.length) {
+      final article = articles[index];
 
-    if (!favoriteArticles.contains(article)) {
-      await cacheManager.downloadFile(article.link!, key: article.title);
+      if (!favoriteArticles.contains(article)) {
+        await cacheManager.downloadFile(article.link!, key: article.title);
 
-      setState(() {
-        favoriteArticles.add(article);
-      });
+        setState(() {
+          favoriteArticles.add(article);
+        });
 
-      _tabController.animateTo(1);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Esta notícia já está nos favoritos.'),
-          duration: Duration(seconds: 2),
-        ),
-      );
+        _tabController.animateTo(1);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Esta notícia já está nos favoritos.'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
     }
   }
-}
 
   void _removeFromFavorites(int index) {
     if (index >= 0 && index < favoriteArticles.length) {
