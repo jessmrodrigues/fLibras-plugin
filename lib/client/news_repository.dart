@@ -11,7 +11,7 @@ class NewsRepository {
       final newsResponse = await _apiService.fetchNews();
       return newsResponse;
     } catch (e) {
-      throw Exception('Erro ao obter notícias: $e');
+      throw Exception('Error getting news:: $e');
     }
   }
 
@@ -20,7 +20,7 @@ class NewsRepository {
       final newsResponse = await _apiService.getByNewsName(query);
       return newsResponse;
     } catch (e) {
-      throw Exception('Erro ao obter notícias: $e');
+      throw Exception('Error getting news: $e');
     }
   }
 }

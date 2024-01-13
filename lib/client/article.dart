@@ -4,6 +4,7 @@ class Article {
   final String? description;
   final String? urlToImage;
   final String? content;
+  final String? link;
 
   Article({
     this.author,
@@ -11,6 +12,7 @@ class Article {
     this.description,
     this.urlToImage,
     this.content,
+    this.link
   });
 
   factory Article.fromJson(Map<String, dynamic> json) {
@@ -20,6 +22,7 @@ class Article {
       description: json['description'],
       urlToImage: json['urlToImage'],
       content: json['content'],
+      link: json['link'],
     );
   }
 }

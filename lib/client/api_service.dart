@@ -20,10 +20,10 @@ class ApiService {
       if (response.statusCode == 200) {
         return NewsResponse.fromJson(response.data);
       } else {
-        throw Exception('Erro na requisição: ${response.statusCode}');
+        throw Exception('Request error: ${response.statusCode}');
       }
     } catch (e) {
-      throw Exception('Erro: $e');
+      throw Exception('Error: $e');
     }
   }
 
@@ -36,10 +36,10 @@ class ApiService {
       if (response.statusCode == 200) {
         return NewsResponse.fromJson(response.data);
       } else {
-        throw Exception('Erro na requisição: ${response.statusCode}');
+        throw Exception('Request error: ${response.statusCode}');
       }
     } catch (e) {
-      throw Exception('Erro: $e');
+      throw Exception('Error: $e');
     }
   }
 

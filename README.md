@@ -1,16 +1,25 @@
-# fLibras plugin
+News API Implementation with vLibras Integration
 
-A new Flutter project.
+Overview
+This application focuses on the implementation of a news API using the REST architecture and follows the MVC design pattern. Additionally, it features seamless integration with vLibras, making it accessible to individuals with hearing impairments.
 
-## Getting Started
+Features
 
-This project is a starting point for a Flutter application.
+RESTful API: The application leverages REST architecture to provide a robust and scalable API for news-related functionalities.
+MVC Design Pattern: Following the Model-View-Controller design pattern ensures a modular and organized codebase, enhancing maintainability.
+vLibras Integration: The inclusion of vLibras makes the application accessible to individuals who are deaf or hard of hearing, enhancing overall inclusivity.
+Getting Started
+To get started with the project, follow these steps:
 
-A few resources to get you started if this is your first Flutter project:
+Clone the Repository:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+bash
+git clone https://github.com/jessmrodrigues/fLibras-plugin.git
+cd fLibras-plugin
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Install Dependencies:
+flutter pub get
+
+
+Accessibility
+This application prioritizes accessibility by integrating vLibras, ensuring a positive user experience for individuals with hearing impairments.
