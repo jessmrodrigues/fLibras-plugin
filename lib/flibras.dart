@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:test_singleton/webview_controller_manager.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -25,9 +26,10 @@ class fLibras extends StatelessWidget {
   Widget build(BuildContext context) {
     final htmlContent = _generateHtmlContent();
     return SizedBox(
-      height: 500,
-      width: 500,
+      height: 150,
+      width: 150,
       child: WebView(
+        backgroundColor: Colors.transparent,
         initialUrl: Uri.dataFromString(
           htmlContent,
           mimeType: 'text/html',
@@ -40,6 +42,7 @@ class fLibras extends StatelessWidget {
         onPageFinished: (url) {
           _injectTextIntoWebView(WebViewControllerManager().webViewController!);
         },
+        gestureNavigationEnabled: false,
       ),
     );
   }

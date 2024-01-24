@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:test_singleton/flibras_view.dart';
 import 'package:share/share.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:http/http.dart' as http;
 
 import 'client/article.dart';
 import 'client/news_repository.dart';
@@ -22,7 +23,6 @@ class _NewsState extends State<News> with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   late Dio dio;
-  late DefaultCacheManager cacheManager;
 
   @override
   void initState() {
@@ -33,7 +33,6 @@ class _NewsState extends State<News> with SingleTickerProviderStateMixin {
     _tabController = TabController(length: 2, vsync: this);
 
     dio = Dio();
-    cacheManager = DefaultCacheManager();
 
     _loadNews();
   }
@@ -111,6 +110,8 @@ class _NewsState extends State<News> with SingleTickerProviderStateMixin {
                   itemBuilder: (context, index) {
                     final isFavorite =
                         favoriteArticles.contains(articles[index]);
+                    final imageUrl = articles[index].image_url;
+
                     return Card(
                       margin: const EdgeInsets.all(8.0),
                       child: ListTile(
@@ -120,12 +121,27 @@ class _NewsState extends State<News> with SingleTickerProviderStateMixin {
                           children: [
                             Text(articles[index].description ?? ''),
                             SizedBox(height: 8.0),
-                            if (articles[index].image_url != null)
-                              Image.network(
-                                articles[index].image_url!,
-                                height: 100.0,
-                                width: double.infinity,
-                                fit: BoxFit.cover,
+                            if (imageUrl != null)
+                              FutureBuilder<bool>(
+                                future: _isImageUrlValid(imageUrl),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return CircularProgressIndicator();
+                                  } else if (snapshot.hasError ||
+                                      !snapshot.data!) {
+                                    // Exibe um widget de erro ou oculta a seção da imagem
+                                    return Container(); // ou substitua por um widget de erro
+                                  } else {
+                                    // A URL é válida, exibe a imagem
+                                    return Image.network(
+                                      imageUrl,
+                                      height: 100.0,
+                                      width: double.infinity,
+                                      fit: BoxFit.cover,
+                                    );
+                                  }
+                                },
                               ),
                           ],
                         ),
@@ -151,6 +167,15 @@ class _NewsState extends State<News> with SingleTickerProviderStateMixin {
                             ),
                           ],
                         ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  FLibrasView(article: articles[index]),
+                            ),
+                          );
+                        },
                       ),
                     );
                   },
@@ -168,14 +193,23 @@ class _NewsState extends State<News> with SingleTickerProviderStateMixin {
                       margin: const EdgeInsets.all(8.0),
                       child: ListTile(
                         title: Text(favoriteArticles[index].title),
-                        subtitle:
-                            Text(favoriteArticles[index].description ?? ''),
+                        subtitle: Text(
+                            favoriteArticles[index].description ?? ''),
                         trailing: IconButton(
                           icon: const Icon(Icons.delete),
                           onPressed: () {
                             _removeFromFavorites(index);
                           },
                         ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  FLibrasView(article: articles[index]),
+                            ),
+                          );
+                        },
                       ),
                     );
                   },
@@ -188,13 +222,20 @@ class _NewsState extends State<News> with SingleTickerProviderStateMixin {
     );
   }
 
+  Future<bool> _isImageUrlValid(String imageUrl) async {
+    try {
+      final response = await http.head(Uri.parse(imageUrl));
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+
   Future<void> _addToFavorites(int index) async {
     if (index >= 0 && index < articles.length) {
       final article = articles[index];
 
       if (!favoriteArticles.contains(article)) {
-        await cacheManager.downloadFile(article.link!, key: article.title);
-
         setState(() {
           favoriteArticles.add(article);
         });
