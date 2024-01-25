@@ -1,17 +1,15 @@
 import 'dart:convert';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:test_singleton/webview_controller_manager.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import 'html_content.dart';
 
-class fLibras extends StatelessWidget {
+class FLibras extends StatelessWidget {
   final List<String> texts;
-  HtmlGenerator htmlGenerator = HtmlGenerator();
+  final HtmlGenerator htmlGenerator = HtmlGenerator();
 
-  fLibras({required this.texts});
+  FLibras({super.key, required this.texts});
 
   String _generateHtmlContent() {
     return htmlGenerator.generateHtmlContent();

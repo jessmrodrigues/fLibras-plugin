@@ -3,6 +3,7 @@ import 'package:test_singleton/flibras_view.dart';
 import 'package:share/share.dart';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
+import 'dart:io';
 
 import 'client/article.dart';
 import 'client/news_repository.dart';
@@ -41,10 +42,10 @@ class _NewsState extends State<News> with SingleTickerProviderStateMixin {
     try {
       final newsResponse = await widget.newsRepository.getNews();
       setState(() {
-        articles = newsResponse.articles;
+        articles = _filterArticlesWithImages(newsResponse.articles);
       });
     } catch (e) {
-      print('Error loading news: $e');
+      throw HttpException('Error loading news: $e');
     }
   }
 
@@ -53,14 +54,18 @@ class _NewsState extends State<News> with SingleTickerProviderStateMixin {
       if (query.isNotEmpty) {
         final newsResponse = await widget.newsRepository.getNameNews(query);
         setState(() {
-          articles = newsResponse.articles;
+          articles = _filterArticlesWithImages(newsResponse.articles);
         });
       } else {
         _loadNews();
       }
     } catch (e) {
-      print('Error searching news: $e');
+      throw HttpException('Error searching news: $e');
     }
+  }
+
+  List<Article> _filterArticlesWithImages(List<Article> articles) {
+    return articles.where((article) => article.imageUrl != null).toList();
   }
 
   @override
@@ -76,6 +81,8 @@ class _NewsState extends State<News> with SingleTickerProviderStateMixin {
               Tab(text: 'Notícias'),
               Tab(text: 'Favoritos'),
             ],
+            indicatorColor: Colors.grey,
+            labelColor: Colors.black,
           ),
         ),
       ),
@@ -94,7 +101,7 @@ class _NewsState extends State<News> with SingleTickerProviderStateMixin {
                   ),
                   child: TextField(
                     controller: searchController,
-                    onChanged: (query) {
+                    onSubmitted: (query) {
                       _searchNews(query);
                     },
                     decoration: const InputDecoration(
@@ -110,7 +117,7 @@ class _NewsState extends State<News> with SingleTickerProviderStateMixin {
                   itemBuilder: (context, index) {
                     final isFavorite =
                         favoriteArticles.contains(articles[index]);
-                    final imageUrl = articles[index].image_url;
+                    final imageUrl = articles[index].imageUrl;
 
                     return Card(
                       margin: const EdgeInsets.all(8.0),
@@ -120,20 +127,18 @@ class _NewsState extends State<News> with SingleTickerProviderStateMixin {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(articles[index].description ?? ''),
-                            SizedBox(height: 8.0),
+                            const SizedBox(height: 8.0),
                             if (imageUrl != null)
                               FutureBuilder<bool>(
                                 future: _isImageUrlValid(imageUrl),
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState ==
                                       ConnectionState.waiting) {
-                                    return CircularProgressIndicator();
+                                    return const CircularProgressIndicator();
                                   } else if (snapshot.hasError ||
                                       !snapshot.data!) {
-                                    // Exibe um widget de erro ou oculta a seção da imagem
-                                    return Container(); // ou substitua por um widget de erro
+                                    return Container();
                                   } else {
-                                    // A URL é válida, exibe a imagem
                                     return Image.network(
                                       imageUrl,
                                       height: 100.0,
@@ -193,8 +198,8 @@ class _NewsState extends State<News> with SingleTickerProviderStateMixin {
                       margin: const EdgeInsets.all(8.0),
                       child: ListTile(
                         title: Text(favoriteArticles[index].title),
-                        subtitle: Text(
-                            favoriteArticles[index].description ?? ''),
+                        subtitle:
+                            Text(favoriteArticles[index].description ?? ''),
                         trailing: IconButton(
                           icon: const Icon(Icons.delete),
                           onPressed: () {
@@ -268,7 +273,7 @@ class _NewsState extends State<News> with SingleTickerProviderStateMixin {
       try {
         await Share.share(textToShare, subject: article.title);
       } catch (e) {
-        print('Error sharing news: $e');
+        throw HttpException('Error sharing news: $e');
       }
     }
   }

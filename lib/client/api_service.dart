@@ -1,13 +1,12 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'news_response.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ApiService {
   final Dio _dio = Dio();
-  final String _baseUrl = 'https://newsdata.io/api/1/news';
-  final String _apiKey = 'pub_35028edaa643686e9a6d35c9666ff6a0ac1fc';
-  final String _language = 'pt';
+  final String _baseUrl = dotenv.env['BASE_URL'] ?? '';
+  final String _apiKey = dotenv.env['API_KEY'] ?? '';
+  final String _language = dotenv.env['LANGUAGE'] ?? '';
 
   ApiService();
 
@@ -17,11 +16,9 @@ class ApiService {
         '$_baseUrl?apiKey=$_apiKey&language=$_language',
       );
 
-      if (response.statusCode == 200) {
-        return NewsResponse.fromJson(response.data);
-      } else {
-        throw Exception('Request error: ${response.statusCode}');
-      }
+      return (response.statusCode == 200)
+          ? NewsResponse.fromJson(response.data)
+          : throw Exception('Request error: ${response.statusCode}');
     } catch (e) {
       throw Exception('Error: $e');
     }
@@ -33,14 +30,11 @@ class ApiService {
         '$_baseUrl?apiKey=$_apiKey&qInTitle=$query&language=$_language',
       );
 
-      if (response.statusCode == 200) {
-        return NewsResponse.fromJson(response.data);
-      } else {
-        throw Exception('Request error: ${response.statusCode}');
-      }
+      return (response.statusCode == 200)
+          ? NewsResponse.fromJson(response.data)
+          : throw Exception('Request error: ${response.statusCode}');
     } catch (e) {
       throw Exception('Error: $e');
     }
   }
-
 }

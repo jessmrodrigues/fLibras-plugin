@@ -14,7 +14,8 @@ class TextDisplayWidget extends StatefulWidget {
   final TextBaseline textBaseline;
   final TextDecoration textDecoration;
 
-  TextDisplayWidget({
+  const TextDisplayWidget({
+    super.key,
     required this.displayedText,
     required this.onTap,
     required this.id,
