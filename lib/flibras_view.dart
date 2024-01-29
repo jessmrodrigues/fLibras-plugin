@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:test_singleton/text_display.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'client/article.dart';
 import 'flibras.dart';
@@ -74,77 +75,105 @@ class _FLibrasViewState extends State<FLibrasView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: GestureDetector(
-          onTap: () {
-            findTextById(contentList.indexOf(title));
-          },
-          child: Text(
-            title,
+    return MaterialApp(
+      theme: ThemeData.light(),
+      darkTheme: ThemeData.dark(),
+      themeMode: ThemeMode.system,
+      home: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
+          title: TextDisplayWidget(
+            displayedText: title,
+            id: contentList.indexOf(title),
+            onTap: (id) {
+              findTextById(id);
+            },
+            fontSize: 18.0,
+            textColor: _getTitleColor(),
+            textDecoration: TextDecoration.none,
+          ),
+          backgroundColor: Colors.transparent,
         ),
-        backgroundColor: Colors.transparent,
-      ),
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                if (isImageUrlValid && widget.article.imageUrl != null)
-                  Image.network(
-                    widget.article.imageUrl!,
-                    height: 200.0,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
+        body: Stack(
+          children: [
+            SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (isImageUrlValid && widget.article.imageUrl != null)
+                    Image.network(
+                      widget.article.imageUrl!,
+                      height: 200.0,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: contentList
+                          .asMap()
+                          .entries
+                          .map((entry) => TextDisplayWidget(
+                                displayedText: entry.value,
+                                id: entry.key,
+                                onTap: (id) {
+                                  if (entry.value.contains('https')) {
+                                    launchUrl(Uri.parse(widget.article.link!));
+                                  } else {
+                                    findTextById(id);
+                                  }
+                                },
+                                fontSize: 16.0,
+                                textColor: _getTextColor(entry.value),
+                                textDecoration: _getTextDecoration(entry.value),
+                              ))
+                          .toList(),
+                    ),
                   ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: contentList
-                        .asMap()
-                        .entries
-                        .map((entry) => GestureDetector(
-                              onTap: () {
-                                if (entry.value.contains('https')) {
-                                  launchUrl(Uri.parse(widget.article.link!));
-                                } else {
-                                  findTextById(entry.key);
-                                }
-                              },
-                              child: Text(
-                                entry.value,
-                                style: TextStyle(
-                                  fontSize: 16.0,
-                                  color: entry.value.contains('https')
-                                      ? Colors.indigo
-                                      : Colors.black,
-                                  decoration: entry.value.contains('https')
-                                      ? TextDecoration.underline
-                                      : TextDecoration.none,
-                                ),
-                              ),
-                            ))
-                        .toList(),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          SizedBox(
-            height: 200,
-            width: 400,
-            child: Positioned(
-              bottom: 16.0,
-              right: 16.0,
-              child: FLibras(texts: contentList),
+            SizedBox(
+              height: 200,
+              width: 400,
+              child: Positioned(
+                bottom: 16.0,
+                right: 16.0,
+                child: FLibras(texts: contentList),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
+  }
+
+  Color _getTextColor(String text) {
+    return text.contains('https')
+        ? Colors.blue
+        : Theme.of(context).brightness == Brightness.dark
+            ? Colors.white
+            : Colors.black;
+  }
+
+  TextDecoration _getTextDecoration(String text) {
+    if (text.contains('https') && text.startsWith('http')) {
+      return TextDecoration.underline;
+    } else {
+      return TextDecoration.none;
+    }
+  }
+
+  Color _getTitleColor() {
+    return Theme.of(context).brightness == Brightness.dark
+        ? Colors.white
+        : Colors.black;
   }
 
   void findTextById(int id) {

@@ -15,51 +15,38 @@ class TextDisplayWidget extends StatefulWidget {
   final TextDecoration textDecoration;
 
   const TextDisplayWidget({
-    super.key,
+    Key? key,
     required this.displayedText,
     required this.onTap,
     required this.id,
     this.fontSize = 16,
-    this.fontWeight = FontWeight.bold,
+    this.fontWeight = FontWeight.normal,
     this.textColor = Colors.blue,
     this.lineHeight = 1.0,
-    this.fontFamily = 'Helvetica',
+    this.fontFamily = 'Arial',
     this.letterSpacing = 0.0,
     this.wordSpacing = 0.0,
     this.textBaseline = TextBaseline.alphabetic,
     this.textDecoration = TextDecoration.none,
-  });
+  }) : super(key: key);
 
   @override
   _TextDisplayWidgetState createState() => _TextDisplayWidgetState();
 }
 
 class _TextDisplayWidgetState extends State<TextDisplayWidget> {
-  int? lastClicked;
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        setState(() {
-          if (lastClicked == widget.id) {
-            lastClicked = null;
-          } else {
-            lastClicked = widget.id;
-          }
-        });
         widget.onTap(widget.id);
       },
       child: Text(
         widget.displayedText,
         style: TextStyle(
-          fontSize: widget.fontSize,
-          fontWeight: widget.fontWeight,
-          color: widget.textColor,
-          decoration: lastClicked == widget.id
-              ? TextDecoration.underline
-              : TextDecoration.none,
-        ),
+            fontSize: widget.fontSize,
+            fontWeight: widget.fontWeight,
+            color: widget.textColor),
       ),
     );
   }
