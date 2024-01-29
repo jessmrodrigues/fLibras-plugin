@@ -28,11 +28,8 @@ class FLibras extends StatelessWidget {
       width: 150,
       child: WebView(
         backgroundColor: Colors.transparent,
-        initialUrl: Uri.dataFromString(
-          htmlContent,
-          mimeType: 'text/html',
-          encoding: Encoding.getByName('utf-8'),
-        ).toString(),
+        initialUrl:
+            'https://65b710a854edd8d49acf0942--beautiful-fairy-a70b27.netlify.app/',
         javascriptMode: JavascriptMode.unrestricted,
         onWebViewCreated: (WebViewController controller) {
           WebViewControllerManager().setWebViewController(controller);
